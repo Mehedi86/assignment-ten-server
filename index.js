@@ -30,6 +30,7 @@ async function run() {
 
         const topGameCollection = client.db('gameDB').collection('games');
         const reviewCollection = client.db('reviewDB').collection('reviews');
+        const watchListCollection = client.db('watchlistDB').collection('watchlist')
 
         // app.post('/games', async(req, res)=>{
         //     const games = req.body;
@@ -55,6 +56,19 @@ async function run() {
             res.send(result)
         })
 
+        app.post('/myWatchlist', async (req, res) => {
+            const watchlist = req.body;
+            const result = await watchListCollection.insertOne(watchlist);
+            res.send(result)
+        })
+
+        app.get('/myWatchlist/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const result = await watchListCollection.find(query).toArray();
+            res.send(result)
+        })
+
         app.get('/reviews', async (req, res) => {
             const cursor = reviewCollection.find();
             const result = await cursor.toArray();
@@ -68,9 +82,9 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/reviews/yourReview/:email', async (req, res) =>{
+        app.get('/reviews/yourReview/:email', async (req, res) => {
             const email = req.params.email;
-            const query = {email}
+            const query = { email }
             const result = await reviewCollection.find(query).toArray();
             res.send(result);
         })
